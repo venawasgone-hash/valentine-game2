@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mobile Roblox Valentine</title>
+<title>Purple & Orange Roblox Valentine</title>
 <style>
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(#b3e5ff, #ffffff);
+  background: linear-gradient(160deg, #8e44ad, #e67e22);
   overflow: hidden;
   touch-action: none;
 }
@@ -21,13 +21,13 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 10;
+  text-align: center;
 }
 .box {
   background: white;
   padding: 30px;
   border-radius: 15px;
   width: 330px;
-  text-align: center;
 }
 button {
   padding: 10px 20px;
@@ -39,7 +39,7 @@ button {
 #character {
   width: 60px;
   height: 120px;
-  background: #f2d6c1;
+  background: #f39c12;
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -47,7 +47,7 @@ button {
   border-radius: 20px;
 }
 .hair {
-  background: #f5e26b;
+  background: #9b59b6;
   height: 30px;
   border-radius: 20px 20px 0 0;
 }
@@ -74,7 +74,7 @@ button {
   position: absolute;
   width: 8px;
   height: 16px;
-  background: pink;
+  background: #8e44ad;
   border-radius: 4px;
 }
 .heart {
@@ -84,7 +84,7 @@ button {
 }
 .green { color: green; }
 .red { color: red; }
-#progress { font-weight: bold; margin: 10px; }
+#progress { font-weight: bold; margin: 10px; color: white; }
 #confetti {
   position: fixed;
   top: 0; left: 0;
@@ -152,7 +152,8 @@ const progress = document.getElementById("progress");
 let touchX = null;
 game.addEventListener("touchstart", e => {
   touchX = e.touches[0].clientX;
-  shootBullet(touchX, character.offsetTop);
+  moveCharacter(touchX);
+  shootBullet();
 });
 game.addEventListener("touchmove", e => {
   touchX = e.touches[0].clientX;
@@ -190,11 +191,11 @@ function spawnHearts() {
     heart.dataset.speed = 2 + Math.random() * 2;
     game.appendChild(heart);
     hearts.push(heart);
-  }, 800);
+  }, 600);
 }
 
 // --- SHOOT BULLETS ---
-function shootBullet(x, y) {
+function shootBullet() {
   const bullet = document.createElement("div");
   bullet.classList.add("bullet");
   const charRect = character.getBoundingClientRect();
@@ -214,7 +215,6 @@ function animateGame() {
     y += parseFloat(h.dataset.speed);
     h.style.top = y + "px";
 
-    // Remove hearts off screen
     if (y > window.innerHeight) {
       h.remove();
       hearts.splice(i,1);
@@ -227,7 +227,6 @@ function animateGame() {
     y -= 6;
     b.style.top = y + "px";
 
-    // Check collision with hearts
     hearts.forEach((h, j) => {
       if (collision(b, h)) {
         if (h.classList.contains("green")) {
@@ -246,84 +245,6 @@ function animateGame() {
       }
     });
 
-    // Remove bullet off screen
     if (y < -20) {
-      bullets[i].remove();
-      bullets.splice(i,1);
-    }
-  });
-}
+      bullets[i].re
 
-// --- COLLISION DETECTION ---
-function collision(a, b) {
-  const rect1 = a.getBoundingClientRect();
-  const rect2 = b.getBoundingClientRect();
-  return !(
-    rect1.top > rect2.bottom ||
-    rect1.bottom < rect2.top ||
-    rect1.right < rect2.left ||
-    rect1.left > rect2.right
-  );
-}
-
-function updateProgress() {
-  progress.innerText = `Progress: ${score} / ${goal}`;
-}
-
-function endGame() {
-  cancelAnimationFrame(animationId);
-  clearInterval(heartInterval);
-  hearts.forEach(h => h.remove());
-  bullets.forEach(b => b.remove());
-  hearts = [];
-  bullets = [];
-  game.style.display = "none";
-  document.getElementById("winMessage").style.display = "flex";
-}
-
-// --- VALENTINE ---
-function showValentine() {
-  document.getElementById("winMessage").style.display = "none";
-  document.getElementById("valentine").style.display = "flex";
-}
-
-function yes() {
-  document.getElementById("valentine").style.display = "none";
-  launchConfetti();
-}
-
-// --- CONFETTI ---
-function launchConfetti() {
-  const canvas = document.getElementById("confetti");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  let pieces = [];
-  for (let i = 0; i < 200; i++) {
-    pieces.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 6 + 4,
-      c: `hsl(${Math.random()*360},100%,50%)`,
-      s: Math.random() * 3 + 2
-    });
-  }
-
-  function draw() {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = p.c;
-      ctx.fill();
-      p.y += p.s;
-      if (p.y > canvas.height) p.y = 0;
-    });
-    requestAnimationFrame(draw);
-  }
-  draw();
-}
-</script>
-</body>
-</html>
